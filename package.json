@@ -1,0 +1,32 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "prod": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-routemagic": "^2.0.8",
+    "express-useragent": "^1.0.15",
+    "http": "^0.0.1-security",
+    "mongodb": "^5.6.0",
+    "nodemon": "^2.0.22",
+    "resend": "^0.15.3",
+    "response-time": "^2.3.2",
+    "uuid": "^9.0.0",
+    "validator": "^13.9.0",
+    "ws": "^8.13.0"
+  }
+}
