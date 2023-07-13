@@ -7,6 +7,12 @@ const { v4: uuidv4 } = require("uuid");
 
 router.post("/", async (req, res) => {
   try {
+
+    if (validator.isEmpty(req.body.name) === true || validator.isAlphanumeric(req.body.name) === false) {
+      res.json({error: "Name is invalid"})
+      return
+    }
+
     const client = get();
 
     await client
@@ -20,7 +26,7 @@ router.post("/", async (req, res) => {
       .db("EgloCloud")
       .collection("Servers")
       .insertOne({
-        name: req.body.name,
+        name: req.body.name.trim(),
         id: id,
         channels: [],
         users: [req.cookies.id],

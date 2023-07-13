@@ -2,21 +2,8 @@ const express = require("express");
 const router = express.Router();
 const { get } = require("../../mongodb");
 
-require("dotenv").config();
-
-const validator = require("validator");
-
 router.post("/", async (req, res) => {
   try {
-    if (
-      req.body.name.length > 25 ||
-      validator.isEmpty(req.body.name) === true ||
-      validator.isAlphanumeric(req.body.name) === false
-    ) {
-      res.json({ error: "Name is invalid" });
-      return;
-    }
-
     const client = get();
 
     const user = await client
@@ -29,10 +16,34 @@ router.post("/", async (req, res) => {
       .collection("Servers")
       .findOne({ id: req.body.server_id });
 
-    if (user.id !== server.server_owner) {
-      res.json({ error: "Unauthorized" });
+    if (user.id === server.server_owner) {
+      res.json({ error: "You can not leave your own server" });
       return;
     }
+
+    await client
+      .db("EgloCloud")
+      .collection("Users")
+      .updateOne(
+        { token: req.cookies.token },
+        {
+          $pull: {
+            keychain: { id: req.body.server_id },
+          },
+        }
+      );
+
+    await client
+      .db("EgloCloud")
+      .collection("Users")
+      .updateOne(
+        { token: req.cookies.token },
+        {
+          $pull: {
+            servers: { id: req.body.server_id },
+          },
+        }
+      );
 
     await client
       .db("EgloCloud")
@@ -40,16 +51,15 @@ router.post("/", async (req, res) => {
       .updateOne(
         { id: req.body.server_id },
         {
-          $set: {
-            name: req.body.name,
+          $pull: {
+            users: req.cookies.id,
           },
         }
       );
 
     res.json({ success: true });
-  } catch (error) {
-    console.log(error);
-    res.json({ error: "Failed to change server name" });
+  } catch {
+    res.json({ error: "Failed to leave server" });
   }
 });
 

@@ -6,30 +6,26 @@ router.post("/", async (req, res) => {
   try {
     const client = get();
 
-    const server = await client
-      .db("EgloCloud")
-      .collection("Servers")
-      .findOne({ id: req.body.server_id });
-
     const user = await client
       .db("EgloCloud")
       .collection("Users")
       .findOne({ token: req.cookies.token });
+
+    const server = await client
+      .db("EgloCloud")
+      .collection("Servers")
+      .findOne({ id: req.body.server_id });
 
     if (user.id !== server.server_owner) {
       res.json({ error: "Unauthorized" });
       return;
     }
 
-    if (server.server_owner === user.id) {
-      res.json({ error: "You can not remove yourself from your own server" });
-    }
-
     await client
       .db("EgloCloud")
       .collection("Users")
-      .updateOne(
-        { id: req.body.user_id },
+      .updateMany(
+        { "keychain.id": req.body.server_id },
         {
           $pull: {
             keychain: { id: req.body.server_id },
@@ -40,8 +36,8 @@ router.post("/", async (req, res) => {
     await client
       .db("EgloCloud")
       .collection("Users")
-      .updateOne(
-        { id: req.body.user_id },
+      .updateMany(
+        { "servers.id": req.body.server_id },
         {
           $pull: {
             servers: { id: req.body.server_id },
@@ -49,21 +45,21 @@ router.post("/", async (req, res) => {
         }
       );
 
+    for (const val of server.channels) {
+      client
+        .db("EgloCloud")
+        .collection("Messages")
+        .deleteMany({ channel_id: val.channel_id });
+    }
+
     await client
-      .db("EgloCloud")
-      .collection("Servers")
-      .updateOne(
-        { id: req.body.server_id },
-        {
-          $pull: {
-            users: req.body.user_id,
-          },
-        }
-      );
+        .db("EgloCloud")
+        .collection("Servers")
+        .deleteOne({ id: req.body.server_id });
 
     res.json({ success: true });
   } catch {
-    res.json({ error: "Failed to remove user" });
+    res.json({ error: "Failed to delete server" });
   }
 });
 

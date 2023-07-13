@@ -15,6 +15,21 @@ router.post("/", async (req, res) => {
 
     const client = get();
 
+    const user = await client
+      .db("EgloCloud")
+      .collection("Users")
+      .findOne({ token: req.cookies.token });
+
+    const server = await client
+      .db("EgloCloud")
+      .collection("Servers")
+      .findOne({ id: req.body.server_id });
+
+    if (user.id !== server.server_owner) {
+      res.json({ error: "Unauthorized" });
+      return;
+    }
+
     await client
       .db("EgloCloud")
       .collection("Servers")

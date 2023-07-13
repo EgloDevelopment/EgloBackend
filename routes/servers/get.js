@@ -19,7 +19,7 @@ router.post("/", async (req, res) => {
         .collection("Servers")
         .findOne({ id: val.id });
 
-      server_array.push({ name: server.name, id: server.id, channels: server.channels });
+      server_array.push({ name: server.name, id: server.id, channels: server.channels, server_owner: server.server_owner });
     }
 
     res.json(server_array);
