@@ -7,10 +7,12 @@ const { v4: uuidv4 } = require("uuid");
 
 router.post("/", async (req, res) => {
   try {
-
-    if (validator.isEmpty(req.body.name) === true || validator.isAlphanumeric(req.body.name) === false) {
-      res.json({error: "Name is invalid"})
-      return
+    if (
+      validator.isEmpty(req.body.name) === true ||
+      validator.isAlphanumeric(req.body.name) === false
+    ) {
+      res.json({ error: "Name is invalid" });
+      return;
     }
 
     const client = get();
@@ -31,7 +33,7 @@ router.post("/", async (req, res) => {
         channels: [],
         users: [req.cookies.id],
         allow_new_users: true,
-        server_owner: req.cookies.id
+        server_owner: req.cookies.id,
       });
 
     await client

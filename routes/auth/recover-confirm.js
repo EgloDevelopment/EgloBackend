@@ -4,8 +4,6 @@ const { get } = require("../../mongodb");
 
 require("dotenv").config();
 
-const validator = require("validator");
-
 router.post("/", async (req, res) => {
   try {
     const client = get();
@@ -13,7 +11,7 @@ router.post("/", async (req, res) => {
     const user = await client
       .db("EgloCloud")
       .collection("Users")
-      .findOne({ id: user.id });
+      .findOne({ id: req.body.id });
     if (user !== null) {
       if (
         user.recovery_email &&

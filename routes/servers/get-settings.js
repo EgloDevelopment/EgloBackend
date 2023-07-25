@@ -22,7 +22,13 @@ router.post("/", async (req, res) => {
       users.push({ username: users_results.username, id: val });
     }
 
-    res.json({ channels: database_interaction.channels, users: users, name: database_interaction.name, id: database_interaction.id, allow_new_users: database_interaction.allow_new_users });
+    res.json({
+      channels: database_interaction.channels,
+      users: users,
+      name: database_interaction.name,
+      id: database_interaction.id,
+      allow_new_users: database_interaction.allow_new_users,
+    });
   } catch (e) {
     console.log(e);
     res.json({ error: "Failed to get user data" });

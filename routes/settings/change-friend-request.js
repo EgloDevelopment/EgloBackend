@@ -26,7 +26,7 @@ router.post("/", async (req, res) => {
         }
       );
 
-    res.json({success: true});
+    res.json({ success: true });
   } catch (error) {
     res.json({ error: "Failed to change setting" });
   }

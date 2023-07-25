@@ -19,12 +19,17 @@ router.post("/", async (req, res) => {
         .collection("Servers")
         .findOne({ id: val.id });
 
-      server_array.push({ name: server.name, id: server.id, channels: server.channels, server_owner: server.server_owner });
+      server_array.push({
+        name: server.name,
+        id: server.id,
+        channels: server.channels,
+        server_owner: server.server_owner,
+      });
     }
 
     res.json(server_array);
-  } catch(e) {
-    console.log(e)
+  } catch (e) {
+    console.log(e);
     res.json({ error: "Failed to get user data" });
   }
 });

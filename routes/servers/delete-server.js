@@ -53,9 +53,9 @@ router.post("/", async (req, res) => {
     }
 
     await client
-        .db("EgloCloud")
-        .collection("Servers")
-        .deleteOne({ id: req.body.server_id });
+      .db("EgloCloud")
+      .collection("Servers")
+      .deleteOne({ id: req.body.server_id });
 
     res.json({ success: true });
   } catch {

@@ -18,7 +18,11 @@ router.post("/", async (req, res) => {
         .db("EgloCloud")
         .collection("Users")
         .findOne({ id: val.other_user });
-      friend_array.push({ username: friend.username, id: friend.id, channel_id: val.channel_id });
+      friend_array.push({
+        username: friend.username,
+        id: friend.id,
+        channel_id: val.channel_id,
+      });
     }
 
     res.json(friend_array);

@@ -9,7 +9,6 @@ const bcrypt = require("bcryptjs");
 
 router.post("/", async (req, res) => {
   try {
-
     if (
       validator.isEmpty(req.body.old_password) === true ||
       validator.isEmpty(req.body.new_password1) === true ||
@@ -43,10 +42,14 @@ router.post("/", async (req, res) => {
         .updateOne(
           { username: database_interaction.username },
           {
-            $set: { password: new_password, private_key: req.body.new_private_key, logged_in: false},
+            $set: {
+              password: new_password,
+              private_key: req.body.new_private_key,
+              logged_in: false,
+            },
           }
         );
-      res.json({success: true});
+      res.json({ success: true });
     } else {
       res.json({ error: "Incorrect password" });
     }

@@ -25,8 +25,7 @@ router.post("/", async (req, res) => {
       .findOne({ username: req.body.username.toLowerCase() });
     if (database_interaction !== null) {
       if (database_interaction.recovery_email) {
-        
-        let recovery_code = uuidv4()
+        let recovery_code = uuidv4();
 
         const emailData = {
           from: "Eglo Recovery <recover@main.eglo.pw>",
@@ -51,7 +50,9 @@ router.post("/", async (req, res) => {
           "Content-Type": "application/json",
         };
 
-        axios.post("https://api.resend.com/emails", emailData, { headers }).catch(() => {});
+        axios
+          .post("https://api.resend.com/emails", emailData, { headers })
+          .catch(() => {});
 
         await client
           .db("EgloCloud")

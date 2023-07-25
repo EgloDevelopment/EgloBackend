@@ -4,7 +4,7 @@ const { get } = require("../../mongodb");
 
 require("dotenv").config();
 
-const { v4: uuidv4 } = require("uuid")
+const { v4: uuidv4 } = require("uuid");
 
 router.post("/", async (req, res) => {
   try {
@@ -32,12 +32,12 @@ router.post("/", async (req, res) => {
         { id: req.body.server_id },
         {
           $push: {
-            channels: { name: req.body.channel_name, channel_id: uuidv4() }
+            channels: { name: req.body.channel_name, channel_id: uuidv4() },
           },
         }
       );
 
-    res.json({success: true});
+    res.json({ success: true });
   } catch (error) {
     res.json({ error: "Failed to create channel" });
   }

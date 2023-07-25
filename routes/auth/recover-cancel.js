@@ -16,7 +16,11 @@ router.post("/", async (req, res) => {
       .collection("Users")
       .findOne({ id: req.body.id });
     if (database_interaction !== null) {
-      if (database_interaction.recovery_email && database_interaction.recoverable === true && req.body.code === database_interaction.recovery_code) {
+      if (
+        database_interaction.recovery_email &&
+        database_interaction.recoverable === true &&
+        req.body.code === database_interaction.recovery_code
+      ) {
         await client
           .db("EgloCloud")
           .collection("Users")

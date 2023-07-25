@@ -8,7 +8,15 @@ const validator = require("validator");
 
 router.post("/", async (req, res) => {
   try {
-    if (req.body.name.length > 25 || validator.isAlphanumeric(req.body.name) === false) {
+    if (req.body.name.length > 25) {
+      res.json({ error: "Channel name must be under 25 characters" });
+      return;
+    }
+
+    if (
+      validator.isAlphanumeric(req.body.name) === false &&
+      validator.isEmpty(req.body.name) === false
+    ) {
       res.json({ error: "Channel name is invalid" });
       return;
     }

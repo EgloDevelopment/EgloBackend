@@ -9,9 +9,7 @@ const bcrypt = require("bcryptjs");
 
 router.post("/", async (req, res) => {
   try {
-    if (
-      validator.isEmpty(req.body.username) === true
-    ) {
+    if (validator.isEmpty(req.body.username) === true) {
       res.json({ error: "Username is invalid" });
       return;
     }

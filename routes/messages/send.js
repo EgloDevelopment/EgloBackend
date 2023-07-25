@@ -36,7 +36,7 @@ router.post("/", async (req, res) => {
     }
     res.json({ status: true });
   } catch (e) {
-    console.log(e)
+    console.log(e);
     res.json({ error: "Failed to send message" });
   }
 });

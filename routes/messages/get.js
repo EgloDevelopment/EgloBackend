@@ -18,7 +18,9 @@ router.post("/", async (req, res) => {
       .limit(parseInt(req.query.limit))
       .toArray();
 
-    const unique_sender_ids = [...new Set(messages.map((item) => item.sender_id))];
+    const unique_sender_ids = [
+      ...new Set(messages.map((item) => item.sender_id)),
+    ];
 
     for (const val of unique_sender_ids) {
       let users_results = await client
