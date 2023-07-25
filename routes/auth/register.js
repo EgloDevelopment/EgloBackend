@@ -40,9 +40,9 @@ router.post("/", async (req, res) => {
       const hash = await bcrypt.hash(req.body.password1, saltRounds);
       let token = uuidv4();
       let id = uuidv4();
-      let recovery_code = uuidv4();
       await client.db("EgloCloud").collection("Users").insertOne({
         username: req.body.username.toLowerCase(),
+        preffered_name: "",
         password: hash,
         logged_in: false,
         //ip: "xxx.xxx.xxx.xx",
@@ -68,7 +68,7 @@ router.post("/", async (req, res) => {
 
         recovery_email: "",
         recoverable: false,
-        recovery_code: recovery_code,
+        recovery_code: "",
       });
       res.json({ success: true, id: id });
     } else {

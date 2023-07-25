@@ -6,6 +6,7 @@ require("dotenv").config();
 
 const validator = require("validator");
 const axios = require("axios");
+const { v4: uuidv4 } = require("uuid");
 
 const resendAccessToken = process.env.RESEND_API_TOKEN;
 
@@ -24,8 +25,11 @@ router.post("/", async (req, res) => {
       .findOne({ username: req.body.username.toLowerCase() });
     if (database_interaction !== null) {
       if (database_interaction.recovery_email) {
+        
+        let recovery_code = uuidv4()
+
         const emailData = {
-          from: "recover@main.eglo.pw",
+          from: "Eglo Recovery <recover@main.eglo.pw>",
           to: database_interaction.recovery_email,
           subject: "Recovery for account: " + database_interaction.username,
           html:
@@ -34,11 +38,11 @@ router.post("/", async (req, res) => {
             '. A account recovery was requested, but unfortunately due to the nature of our encryption, we are unable to reset passwords without compromising our users safety, so the only way to protect your data is to delete your account, you can choose below if you want to continue. </p><table class="s-4 w-full" role="presentation" border="0" cellpadding="0" cellspacing="0" style="width: 100%;" width="100%"> <tbody> <tr> <td style="line-height: 16px; font-size: 16px; width: 100%; height: 16px; margin: 0;" align="left" width="100%" height="16"> &#160; </td></tr></tbody> </table> <table class="btn btn-danger p-3 fw-700" role="presentation" border="0" cellpadding="0" cellspacing="0" style="border-radius: 6px; border-collapse: separate !important; font-weight: 700 !important;"> <tbody> <tr> <td style="line-height: 24px; font-size: 16px; border-radius: 6px; font-weight: 700 !important; margin: 0;" align="center" bgcolor="#dc3545"> <a href="https://app.eglo.pw/recover-confirm?id=' +
             database_interaction.id +
             "&code=" +
-            database_interaction.recovery_code +
+            recovery_code +
             '" style="color: #ffffff; font-size: 16px; font-family: Helvetica, Arial, sans-serif; text-decoration: none; border-radius: 6px; line-height: 20px; display: block; font-weight: 700 !important; white-space: nowrap; background-color: #dc3545; padding: 12px; border: 1px solid #dc3545;">DELETE ACCOUNT</a> </td></tr></tbody> </table> <table class="s-4 w-full" role="presentation" border="0" cellpadding="0" cellspacing="0" style="width: 100%;" width="100%"> <tbody> <tr> <td style="line-height: 16px; font-size: 16px; width: 100%; height: 16px; margin: 0;" align="left" width="100%" height="16"> &#160; </td></tr></tbody> </table> <table class="btn btn-primary p-3 fw-700" role="presentation" border="0" cellpadding="0" cellspacing="0" style="border-radius: 6px; border-collapse: separate !important; font-weight: 700 !important;"> <tbody> <tr> <td style="line-height: 24px; font-size: 16px; border-radius: 6px; font-weight: 700 !important; margin: 0;" align="center" bgcolor="#0d6efd"> <a href="https://app.eglo.pw/recover-cancel?id=' +
             database_interaction.id +
             "&code=" +
-            database_interaction.recovery_code +
+            recovery_code +
             '" style="color: #ffffff; font-size: 16px; font-family: Helvetica, Arial, sans-serif; text-decoration: none; border-radius: 6px; line-height: 20px; display: block; font-weight: 700 !important; white-space: nowrap; background-color: #0d6efd; padding: 12px; border: 1px solid #0d6efd;">CANCEL</a> </td></tr></tbody> </table> </td></tr></tbody> </table> <table class="s-6 w-full" role="presentation" border="0" cellpadding="0" cellspacing="0" style="width: 100%;" width="100%"> <tbody> <tr> <td style="line-height: 24px; font-size: 24px; width: 100%; height: 24px; margin: 0;" align="left" width="100%" height="24"> &#160; </td></tr></tbody> </table> <div class="text-muted text-center" style="color: #718096;" align="center"> Sent with &lt;3 from Eglo Development. <br><br>If you did not request an account recovery click CANCEL<br></div><table class="s-6 w-full" role="presentation" border="0" cellpadding="0" cellspacing="0" style="width: 100%;" width="100%"> <tbody> <tr> <td style="line-height: 24px; font-size: 24px; width: 100%; height: 24px; margin: 0;" align="left" width="100%" height="24"> &#160; </td></tr></tbody> </table> </td></tr></tbody> </table><!--[if (gte mso 9)|(IE)]> </td></tr></tbody> </table><![endif]--> </td></tr></tbody> </table> </td></tr></tbody> </table> </body></html>',
         };
 
@@ -47,10 +51,7 @@ router.post("/", async (req, res) => {
           "Content-Type": "application/json",
         };
 
-        axios.post("https://api.resend.com/emails", emailData, { headers }).catch((error) => {
-          res.json({ error: "Internal server error" });
-          return;
-        });
+        axios.post("https://api.resend.com/emails", emailData, { headers }).catch(() => {});
 
         await client
           .db("EgloCloud")
@@ -58,7 +59,7 @@ router.post("/", async (req, res) => {
           .updateOne(
             { username: req.body.username.toLowerCase() },
             {
-              $set: { recoverable: true },
+              $set: { recoverable: true, recovery_code: recovery_code },
             }
           );
 

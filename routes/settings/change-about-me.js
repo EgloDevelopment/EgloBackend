@@ -20,7 +20,7 @@ router.post("/", async (req, res) => {
         { token: req.cookies.token },
         {
           $set: {
-            about_me: req.body.about_me,
+            about_me: req.body.about_me, preferred_name: req.body.preferred_name
           },
         }
       );

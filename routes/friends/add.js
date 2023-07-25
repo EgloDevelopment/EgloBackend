@@ -11,7 +11,7 @@ router.post("/", async (req, res) => {
     let user_receiving_friend_request = await client
       .db("EgloCloud")
       .collection("Users")
-      .findOne({ username: req.body.username });
+      .findOne({ username: req.body.username.toLowerCase() });
 
     if (user_receiving_friend_request !== null) {
       if (user_receiving_friend_request.accepting_friend_requests === true) {

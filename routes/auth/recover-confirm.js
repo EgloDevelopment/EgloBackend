@@ -10,25 +10,100 @@ router.post("/", async (req, res) => {
   try {
     const client = get();
 
-    const database_interaction = await client
+    const user = await client
       .db("EgloCloud")
       .collection("Users")
-      .findOne({ id: req.body.id });
-    if (database_interaction !== null) {
+      .findOne({ id: user.id });
+    if (user !== null) {
       if (
-        database_interaction.recovery_email &&
-        database_interaction.recoverable === true &&
-        req.body.code === database_interaction.recovery_code
+        user.recovery_email &&
+        user.recoverable === true &&
+        req.body.code === user.recovery_code
       ) {
         await client
           .db("EgloCloud")
           .collection("Users")
-          .deleteOne({ id: req.body.id });
+          .deleteOne({ id: user.id });
 
         await client
           .db("EgloCloud")
           .collection("Messages")
-          .deleteMany({ sender_id: req.body.id });
+          .deleteMany({ sender_id: user.id });
+
+        const owned_servers = await client
+          .db("EgloCloud")
+          .collection("Servers")
+          .find({ server_owner: user.id })
+          .toArray();
+
+        for (const friend of user.friends) {
+          await client
+            .db("EgloCloud")
+            .collection("Users")
+            .updateMany(
+              { "keychain.id": friend.channel_id },
+              {
+                $pull: {
+                  keychain: { id: friend.channel_id },
+                },
+              }
+            );
+
+          await client
+            .db("EgloCloud")
+            .collection("Users")
+            .updateMany(
+              { "friends.channel_id": friend.channel_id },
+              {
+                $pull: {
+                  friends: { channel_id: friend.channel_id },
+                },
+              }
+            );
+
+          await client
+            .db("EgloCloud")
+            .collection("Messages")
+            .deleteMany({ channel_id: friend.channel_id });
+        }
+
+        for (const server of owned_servers) {
+          await client
+            .db("EgloCloud")
+            .collection("Users")
+            .updateMany(
+              { "keychain.id": server.id },
+              {
+                $pull: {
+                  keychain: { id: server.id },
+                },
+              }
+            );
+
+          await client
+            .db("EgloCloud")
+            .collection("Users")
+            .updateMany(
+              { "servers.id": server.id },
+              {
+                $pull: {
+                  servers: { id: server.id },
+                },
+              }
+            );
+
+          for (const val of server.channels) {
+            client
+              .db("EgloCloud")
+              .collection("Messages")
+              .deleteMany({ channel_id: val.channel_id });
+          }
+
+          await client
+            .db("EgloCloud")
+            .collection("Servers")
+            .deleteOne({ id: server.id });
+        }
 
         res.json({ success: true });
       } else {

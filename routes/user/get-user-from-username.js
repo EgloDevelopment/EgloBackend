@@ -15,7 +15,7 @@ router.post("/", async (req, res) => {
     delete database_interaction.keychain;
     delete database_interaction.friends
     delete database_interaction.servers
-    delete database_interaction.ip;
+    delete database_interaction.blocked_users
     delete database_interaction.last_online;
     delete database_interaction.available_space;
     delete database_interaction.logged_in;

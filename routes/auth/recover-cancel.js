@@ -23,7 +23,7 @@ router.post("/", async (req, res) => {
           .updateOne(
             { id: req.body.id },
             {
-              $set: { recoverable: false, recovery_code: uuidv4() },
+              $set: { recoverable: false, recovery_code: "" },
             }
           );
 
