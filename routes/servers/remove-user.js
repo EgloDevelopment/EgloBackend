@@ -21,8 +21,9 @@ router.post("/", async (req, res) => {
       return;
     }
 
-    if (server.server_owner === user.id) {
+    if (server.server_owner === req.body.user_id) {
       res.json({ error: "You can not remove yourself from your own server" });
+      return;
     }
 
     await client
