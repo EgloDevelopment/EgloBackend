@@ -8,8 +8,8 @@ const validator = require("validator");
 
 router.post("/", async (req, res) => {
   try {
-    if (req.body.name.length > 25) {
-      res.json({ error: "Name is invalid" });
+    if (req.body.name.length > 25 || validator.isAlphanumeric(req.body.name) === false) {
+      res.json({ error: "Channel name is invalid" });
       return;
     }
 

@@ -33,6 +33,6 @@ app.use(function (req, res, next) {
 const magic = require("express-routemagic");
 magic.use(app);
 
-server.listen(5000, () => {
-  console.log(`Eglo API listening on port 5000`);
+server.listen(40002, () => {
+  console.log(`Eglo API listening on port 40002`);
 });
