@@ -20,7 +20,9 @@ router.post("/", async (req, res) => {
         .findOne({ id: val.other_user });
       friend_array.push({
         username: friend.username,
+        preferred_name: friend.preferred_name,
         id: friend.id,
+        logged_in: friend.logged_in,
         channel_id: val.channel_id,
       });
     }
