@@ -3,10 +3,16 @@ const router = express.Router();
 const { get } = require("../../mongodb");
 
 const { v4: uuidv4 } = require("uuid");
+const validator = require("validator")
 
 router.post("/", async (req, res) => {
   try {
     const client = get();
+
+    if (validator.isEmpty(req.body.username) === true) {
+      res.json({error: "Username is invalid"})
+      return
+    }
 
     let user_receiving_friend_request = await client
       .db("EgloCloud")
