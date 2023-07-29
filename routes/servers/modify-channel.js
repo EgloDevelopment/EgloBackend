@@ -13,14 +13,6 @@ router.post("/", async (req, res) => {
       return;
     }
 
-    if (
-      validator.isAlphanumeric(req.body.name) === false &&
-      validator.isEmpty(req.body.name) === false
-    ) {
-      res.json({ error: "Channel name is invalid" });
-      return;
-    }
-
     const client = get();
 
     const user = await client

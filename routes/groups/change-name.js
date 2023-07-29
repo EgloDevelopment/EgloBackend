@@ -18,26 +18,21 @@ router.post("/", async (req, res) => {
 
     const client = get();
 
-    const user = await client
+    const group = await client
       .db("EgloCloud")
-      .collection("Users")
-      .findOne({ token: req.cookies.token });
+      .collection("Groups")
+      .findOne({ id: req.body.group_id });
 
-    const server = await client
-      .db("EgloCloud")
-      .collection("Servers")
-      .findOne({ id: req.body.server_id });
-
-    if (user.id !== server.server_owner) {
+    if (group.users.includes(req.cookies.id) === false) {
       res.json({ error: "Unauthorized" });
       return;
     }
 
     await client
       .db("EgloCloud")
-      .collection("Servers")
+      .collection("Groups")
       .updateOne(
-        { id: req.body.server_id },
+        { id: req.body.group_id },
         {
           $set: {
             name: req.body.name,
@@ -48,7 +43,7 @@ router.post("/", async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     console.log(error);
-    res.json({ error: "Failed to change server name" });
+    res.json({ error: "Failed to change group name" });
   }
 });
 

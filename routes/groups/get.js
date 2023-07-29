@@ -15,7 +15,7 @@ router.post("/", async (req, res) => {
 
     res.json(database_interaction);
   } catch {
-    res.json({ error: "Failed to get user data" });
+    res.json({ error: "Failed to get user groups" });
   }
 });
 
