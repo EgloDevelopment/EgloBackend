@@ -50,9 +50,11 @@ router.post("/", async (req, res) => {
           "Content-Type": "application/json",
         };
 
-        axios
+        await axios
           .post("https://api.resend.com/emails", emailData, { headers })
-          .catch(() => {});
+          .catch((error) => {
+            console.log(error)
+          });
 
         await client
           .db("EgloCloud")
