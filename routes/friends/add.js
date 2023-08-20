@@ -19,6 +19,11 @@ router.post("/", async (req, res) => {
       .collection("Users")
       .findOne({ username: req.body.username.toLowerCase() });
 
+    if (req.cookies.username === user_receiving_friend_request.username) {
+      res.json({error: "You can not add yourself"})
+      return
+    }
+
     if (user_receiving_friend_request !== null) {
       if (user_receiving_friend_request.accepting_friend_requests === true) {
         if (
