@@ -3,9 +3,16 @@ const router = express.Router();
 
 require("dotenv").config();
 
-const fs = require("fs");
 const formidable = require("formidable");
 const { v4: uuidv4 } = require("uuid");
+const Minio = require("minio");
+
+var minioClient = new Minio.Client({
+  endPoint: "minio.eglo.pw",
+  useSSL: true,
+  accessKey: process.env.MINIO_ACCESSKEY,
+  secretKey: process.env.MINIO_SECRETKEY,
+});
 
 router.post("/", (req, res) => {
   try {
@@ -14,19 +21,18 @@ router.post("/", (req, res) => {
       const uploadedFile = files.file[0];
       if (!uploadedFile) {
         res.json({ error: "File is invalid" });
-        return
+        return;
       }
 
-      let id = uuidv4()
- 
-      let extension = uploadedFile.originalFilename.split('.').pop();
+      let id = uuidv4();
+
+      let extension = uploadedFile.originalFilename.split(".").pop();
 
       const oldpath = uploadedFile.filepath;
-      const newpath = "./files/" + id + "." +extension;
 
-      fs.rename(oldpath, newpath, function (renameErr) {
-        res.json({ success: true, id: id, name: uploadedFile.originalFilename });
-      });
+      minioClient.fPutObject("user-storage", id + "." + extension, oldpath);
+
+      res.json({ success: true, id: id, name: uploadedFile.originalFilename });
     });
   } catch (e) {
     console.error(e);
