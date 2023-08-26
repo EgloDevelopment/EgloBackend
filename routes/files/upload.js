@@ -8,7 +8,7 @@ const { v4: uuidv4 } = require("uuid");
 const Minio = require("minio");
 
 var minioClient = new Minio.Client({
-  endPoint: "minio.eglo.pw",
+  endPoint: process.env.MINIO_URL,
   useSSL: true,
   accessKey: process.env.MINIO_ACCESSKEY,
   secretKey: process.env.MINIO_SECRETKEY,
