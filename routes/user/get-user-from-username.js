@@ -24,6 +24,7 @@ router.post("/", async (req, res) => {
     delete database_interaction.recoverable;
     delete database_interaction.recovery_code;
     delete database_interaction.recovery_email;
+    delete database_interaction.ens_subscriber_id;
 
     res.json(database_interaction);
   } catch {

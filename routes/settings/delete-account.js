@@ -6,6 +6,7 @@ require("dotenv").config();
 
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
+const axios = require("axios");
 
 router.post("/", async (req, res) => {
   try {
@@ -108,6 +109,11 @@ router.post("/", async (req, res) => {
             .collection("Servers")
             .deleteOne({ id: server.id });
         }
+
+        const json = { subscriber_id: user.ens_subscriber_id };
+
+        await axios
+          .post(process.env.ENS_URL + "/delete-subscriber", json);
 
         res.json({ success: true });
       } else {

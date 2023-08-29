@@ -7,7 +7,7 @@ require("dotenv").config();
 const { v4: uuidv4 } = require("uuid");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
-const axios = require("axios")
+const axios = require("axios");
 
 router.post("/", async (req, res) => {
   try {
@@ -37,44 +37,60 @@ router.post("/", async (req, res) => {
         .collection("Users")
         .findOne({ username: req.body.username.toLowerCase() })) === null
     ) {
+      let ens_id = uuidv4();
+
+      const json = { subscriber_id: ens_id, email: "" };
+
+      await axios
+        .post(process.env.ENS_URL + "/new-subscriber", json)
+        .then((response) => {
+          if (response.data.success === false) {
+            res.json({ error: "Failed to register with the ENS service" });
+            return;
+          }
+        });
+
       const saltRounds = 10;
       const hash = await bcrypt.hash(req.body.password1, saltRounds);
       let token = uuidv4();
       let id = uuidv4();
-      await client.db("EgloCloud").collection("Users").insertOne({
-        username: req.body.username.toLowerCase(),
-        preffered_name: "",
-        password: hash,
-        logged_in: false,
+      await client
+        .db("EgloCloud")
+        .collection("Users")
+        .insertOne({
+          username: req.body.username.toLowerCase(),
+          preffered_name: "",
+          password: hash,
+          logged_in: false,
 
-        last_online: Date.now(),
-        token: token,
-        id: id,
+          last_online: Date.now(),
+          token: token,
+          id: id,
 
-        about_me: "",
-        
-        accepting_friend_requests: true,
+          about_me: "",
 
-        keychain: [],
+          accepting_friend_requests: true,
 
-        friends: [],
+          keychain: [],
 
-        servers: [],
+          friends: [],
 
-        blocked_users: [],
+          servers: [],
 
-        public_key: req.body.public_key,
-        private_key: req.body.private_key,
+          blocked_users: [],
 
-        recovery_email: "",
-        recoverable: false,
-        recovery_code: "",
+          public_key: req.body.public_key,
+          private_key: req.body.private_key,
 
-        ens_subscriber_id: "",
+          recovery_email: "",
+          recoverable: false,
+          recovery_code: "",
 
-        language: req.headers["accept-language"].split(',')[0],
-        subscription: "free"
-      });
+          ens_subscriber_id: ens_id,
+
+          language: req.headers["accept-language"].split(",")[0],
+          subscription: "free",
+        });
       res.json({ success: true, id: id });
     } else {
       res.json({ error: "Username is taken" });

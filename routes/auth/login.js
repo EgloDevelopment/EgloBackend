@@ -6,6 +6,10 @@ require("dotenv").config();
 
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
+const axios = require("axios");
+const browser = require("browser-detect");
+const { formatDate } = require("../../functions/formate-date.js");
+const { pushNotification } = require("../../functions/push-notification.js");
 
 router.post("/", async (req, res) => {
   try {
@@ -20,6 +24,8 @@ router.post("/", async (req, res) => {
     }
 
     const client = get();
+
+    browser_data = browser(req.headers["user-agent"]);
 
     const database_interaction = await client
       .db("EgloCloud")
@@ -41,6 +47,18 @@ router.post("/", async (req, res) => {
                 $set: { last_online: Date.now(), logged_in: true },
               }
             );
+
+          pushNotification(
+            [database_interaction.ens_subscriber_id],
+            "",
+            "New login",
+            "Login on " +
+              formatDate(Date.now()) +
+              " from " +
+              browser_data.name.charAt(0).toUpperCase() +
+              browser_data.name.slice(1)
+          )
+
           res.json(database_interaction);
         } else {
           res.json({ error: "Incorrect credentials" });
