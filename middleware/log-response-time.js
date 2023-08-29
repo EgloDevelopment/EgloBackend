@@ -1,5 +1,3 @@
-require("dotenv").config();
-
 const logResponseTime = function (req, res, next) {
   let start_time = Date.now();
 

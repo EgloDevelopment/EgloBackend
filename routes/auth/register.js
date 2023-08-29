@@ -7,6 +7,7 @@ require("dotenv").config();
 const { v4: uuidv4 } = require("uuid");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
+const axios = require("axios")
 
 router.post("/", async (req, res) => {
   try {
@@ -45,14 +46,13 @@ router.post("/", async (req, res) => {
         preffered_name: "",
         password: hash,
         logged_in: false,
-        //ip: "xxx.xxx.xxx.xx",
+
         last_online: Date.now(),
         token: token,
         id: id,
 
         about_me: "",
-
-        //available_space: 53687091200,
+        
         accepting_friend_requests: true,
 
         keychain: [],
@@ -69,6 +69,11 @@ router.post("/", async (req, res) => {
         recovery_email: "",
         recoverable: false,
         recovery_code: "",
+
+        ens_subscriber_id: "",
+
+        language: req.headers["accept-language"].split(',')[0],
+        subscription: "free"
       });
       res.json({ success: true, id: id });
     } else {

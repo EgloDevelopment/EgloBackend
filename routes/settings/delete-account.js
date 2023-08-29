@@ -111,7 +111,7 @@ router.post("/", async (req, res) => {
 
         res.json({ success: true });
       } else {
-        res.json({ error: "Unauthorized" });
+        res.json({ error: "Wrong password" });
       }
     } else {
       res.json({ error: "Unauthorized" });
