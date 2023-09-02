@@ -3,15 +3,17 @@ const router = express.Router();
 const { get } = require("../../mongodb");
 
 const { v4: uuidv4 } = require("uuid");
-const validator = require("validator")
+const validator = require("validator");
+
+const { pushNotification } = require("../../functions/push-notification");
 
 router.post("/", async (req, res) => {
   try {
     const client = get();
 
     if (validator.isEmpty(req.body.username) === true) {
-      res.json({error: "Username is invalid"})
-      return
+      res.json({ error: "Username is invalid" });
+      return;
     }
 
     let user_receiving_friend_request = await client
@@ -19,9 +21,14 @@ router.post("/", async (req, res) => {
       .collection("Users")
       .findOne({ username: req.body.username.toLowerCase() });
 
+    let user_sending_friend_request = await client
+      .db("EgloCloud")
+      .collection("Users")
+      .findOne({ token: req.cookies.token });
+
     if (req.cookies.username === user_receiving_friend_request.username) {
-      res.json({error: "You can not add yourself"})
-      return
+      res.json({ error: "You can not add yourself" });
+      return;
     }
 
     if (user_receiving_friend_request !== null) {
@@ -70,6 +77,13 @@ router.post("/", async (req, res) => {
                   },
                 }
               );
+
+            pushNotification(
+              [user_receiving_friend_request.ens_subscriber_id],
+              "",
+              "New friend",
+              user_sending_friend_request.username + " added you as a friend"
+            );
 
             res.json({ success: true, channel_id: channel_id });
           } else {

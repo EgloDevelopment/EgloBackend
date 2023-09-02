@@ -7,6 +7,8 @@ require("dotenv").config();
 const validator = require("validator");
 const axios = require("axios");
 const { v4: uuidv4 } = require("uuid");
+const { pushNotification } = require("../../functions/push-notification");
+const { formatDate } = require("../../functions/formate-date")
 
 const resendAccessToken = process.env.RESEND_API_TOKEN;
 
@@ -23,6 +25,7 @@ router.post("/", async (req, res) => {
       .db("EgloCloud")
       .collection("Users")
       .findOne({ username: req.body.username.toLowerCase() });
+
     if (database_interaction !== null) {
       if (database_interaction.recovery_email) {
         let recovery_code = uuidv4();
@@ -53,18 +56,25 @@ router.post("/", async (req, res) => {
         await axios
           .post("https://api.resend.com/emails", emailData, { headers })
           .catch((error) => {
-            console.log(error)
+            console.log(error);
           });
 
         await client
           .db("EgloCloud")
           .collection("Users")
           .updateOne(
-            { username: req.body.username.toLowerCase() },
+            { id: database_interaction.id },
             {
               $set: { recoverable: true, recovery_code: recovery_code },
             }
           );
+
+        pushNotification(
+          [database_interaction.ens_subscriber_id],
+          "",
+          "Account recovery",
+          "An account recovery was requested on " + formatDate(Date.now())
+        );
 
         res.json({ success: true });
       } else {
