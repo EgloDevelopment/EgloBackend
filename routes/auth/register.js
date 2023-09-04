@@ -91,7 +91,13 @@ router.post("/", async (req, res) => {
           language: req.headers["accept-language"].split(",")[0],
           subscription: "free",
         });
-      res.json({ success: true, id: id });
+
+      let user = await client
+        .db("EgloCloud")
+        .collection("Users")
+        .findOne({ id: id });
+
+      res.json(user);
     } else {
       res.json({ error: "Username is taken" });
     }

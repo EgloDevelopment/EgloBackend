@@ -57,17 +57,17 @@ router.post("/", async (req, res) => {
               " from " +
               browser_data.name.charAt(0).toUpperCase() +
               browser_data.name.slice(1)
-          )
+          );
 
           res.json(database_interaction);
         } else {
-          res.json({ error: "Incorrect credentials" });
+          res.json({ error: "Password is incorrect" });
         }
       } else {
-        res.json({ error: "Incorrect credentials" });
+        res.json({ error: "Password is incorrect" });
       }
     } else {
-      res.json({ error: "Incorrect credentials" });
+      res.json({ error: "Password is incorrect" });
     }
   } catch (e) {
     console.log(e);
