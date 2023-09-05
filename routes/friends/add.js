@@ -26,12 +26,14 @@ router.post("/", async (req, res) => {
       .collection("Users")
       .findOne({ token: req.cookies.token });
 
-    if (req.cookies.username === user_receiving_friend_request.username) {
-      res.json({ error: "You can not add yourself" });
-      return;
-    }
-
     if (user_receiving_friend_request !== null) {
+      if (
+        user_sending_friend_request.username ===
+        user_receiving_friend_request.username
+      ) {
+        res.json({ error: "You can not add yourself" });
+        return;
+      }
       if (user_receiving_friend_request.accepting_friend_requests === true) {
         if (
           user_receiving_friend_request.blocked_users.includes(
@@ -44,39 +46,20 @@ router.post("/", async (req, res) => {
             );
 
           if (other_user_friends_list.length === 0) {
+            let id = uuidv4();
             let channel_id = uuidv4();
 
             await client
               .db("EgloCloud")
-              .collection("Users")
-              .updateOne(
-                { id: req.cookies.id },
-                {
-                  $push: {
-                    friends: {
-                      other_user: user_receiving_friend_request.id,
-                      channel_id: channel_id,
-                      visible: true,
-                    },
-                  },
-                }
-              );
-
-            await client
-              .db("EgloCloud")
-              .collection("Users")
-              .updateOne(
-                { id: user_receiving_friend_request.id },
-                {
-                  $push: {
-                    friends: {
-                      other_user: req.cookies.id,
-                      channel_id: channel_id,
-                      visible: true,
-                    },
-                  },
-                }
-              );
+              .collection("Friends")
+              .insertOne({
+                users: [
+                  user_sending_friend_request.id,
+                  user_receiving_friend_request.id,
+                ],
+                id: id,
+                channel_id: channel_id,
+              });
 
             pushNotification(
               [user_receiving_friend_request.ens_subscriber_id],
@@ -85,7 +68,7 @@ router.post("/", async (req, res) => {
               user_sending_friend_request.username + " added you as a friend"
             );
 
-            res.json({ success: true, channel_id: channel_id });
+            res.json({ success: true, id: id });
           } else {
             res.json({ error: "You already have this person added" });
           }

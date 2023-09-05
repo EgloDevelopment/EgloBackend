@@ -13,22 +13,35 @@ router.post("/", async (req, res) => {
       .collection("Users")
       .findOne({ token: req.cookies.token });
 
-    for (const val of database_interaction.friends) {
-      let friend = await client
-        .db("EgloCloud")
-        .collection("Users")
-        .findOne({ id: val.other_user });
-      friend_array.push({
-        username: friend.username,
-        preferred_name: friend.preferred_name,
-        id: friend.id,
-        logged_in: friend.logged_in,
-        channel_id: val.channel_id,
-      });
+    const data_from_friends_db = await client
+      .db("EgloCloud")
+      .collection("Friends")
+      .find({ users: database_interaction.id })
+      .toArray();
+
+    for (const val of data_from_friends_db) {
+      for (const user of val.users) {
+        if (user !== req.cookies.id) {
+          let friend = await client
+            .db("EgloCloud")
+            .collection("Users")
+            .findOne({ id: user });
+          friend_array.push({
+            username: friend.username,
+            preferred_name: friend.preferred_name,
+            id: friend.id,
+            logged_in: friend.logged_in,
+
+            friend_id: val.id,
+            channel_id: val.channel_id,
+          });
+        }
+      }
     }
 
     res.json(friend_array);
-  } catch {
+  } catch (e) {
+    console.log(e);
     res.json({ error: "Failed to get user data" });
   }
 });

@@ -59,9 +59,9 @@ router.post("/", async (req, res) => {
         .collection("Users")
         .insertOne({
           username: req.body.username.toLowerCase(),
-          preffered_name: "",
+          preferred_name: "",
           password: hash,
-          logged_in: false,
+          logged_in: true,
 
           last_online: Date.now(),
           token: token,
@@ -72,8 +72,6 @@ router.post("/", async (req, res) => {
           accepting_friend_requests: true,
 
           keychain: [],
-
-          friends: [],
 
           servers: [],
 

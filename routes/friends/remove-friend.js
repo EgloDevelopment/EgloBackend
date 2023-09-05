@@ -10,25 +10,18 @@ router.post("/", async (req, res) => {
       .db("EgloCloud")
       .collection("Users")
       .updateMany(
-        { "keychain.id": req.body.channel_id },
+        { "keychain.id": req.body.id },
         {
           $pull: {
-            keychain: { id: req.body.channel_id },
+            keychain: { id: req.body.id },
           },
         }
       );
 
-    await client
+      await client
       .db("EgloCloud")
-      .collection("Users")
-      .updateMany(
-        { "friends.channel_id": req.body.channel_id },
-        {
-          $pull: {
-            friends: { channel_id: req.body.channel_id },
-          },
-        }
-      );
+      .collection("Friends")
+      .deleteOne({ id: req.body.id });
 
     await client
       .db("EgloCloud")
