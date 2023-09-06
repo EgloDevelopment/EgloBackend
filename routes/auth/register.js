@@ -73,8 +73,6 @@ router.post("/", async (req, res) => {
 
           keychain: [],
 
-          servers: [],
-
           blocked_users: [],
 
           public_key: req.body.public_key,
