@@ -14,17 +14,6 @@ router.post("/", async (req, res) => {
     if (server !== null) {
       if (server.allow_new_users !== false) {
         if (server.users.includes(req.cookies.id) === false) {
-          await client
-            .db("EgloCloud")
-            .collection("Users")
-            .updateOne(
-              { token: req.cookies.token },
-              {
-                $push: {
-                  servers: { id: req.body.id, visible: true },
-                },
-              }
-            );
 
           await client
             .db("EgloCloud")

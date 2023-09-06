@@ -35,18 +35,6 @@ router.post("/", async (req, res) => {
 
     await client
       .db("EgloCloud")
-      .collection("Users")
-      .updateOne(
-        { token: req.cookies.token },
-        {
-          $pull: {
-            servers: { id: req.body.server_id },
-          },
-        }
-      );
-
-    await client
-      .db("EgloCloud")
       .collection("Servers")
       .updateOne(
         { id: req.body.server_id },

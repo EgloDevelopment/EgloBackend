@@ -6,26 +6,16 @@ router.post("/", async (req, res) => {
   try {
     const client = get();
 
-    const server_array = [];
-
     const database_interaction = await client
       .db("EgloCloud")
       .collection("Users")
       .findOne({ token: req.cookies.token });
 
-    for (const val of database_interaction.servers) {
-      let server = await client
-        .db("EgloCloud")
-        .collection("Servers")
-        .findOne({ id: val.id });
-
-      server_array.push({
-        name: server.name,
-        id: server.id,
-        channels: server.channels,
-        server_owner: server.server_owner,
-      });
-    }
+    const server_array = await client
+    .db("EgloCloud")
+    .collection("Servers")
+    .find({ users: database_interaction.id })
+    .toArray();
 
     res.json(server_array);
   } catch (e) {

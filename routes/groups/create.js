@@ -16,6 +16,11 @@ router.post("/", async (req, res) => {
     let channel_id = uuidv4();
 
     for (const val of req.body.users) {
+      if (req.body.users.length <= 1) {
+        res.json({ error: "You must have more than one person in a group" });
+        return;
+      }
+
       if (val.trim() === req.cookies.username) {
         res.json({ error: "You can not add yourself" });
         return;

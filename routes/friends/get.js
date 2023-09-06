@@ -29,10 +29,10 @@ router.post("/", async (req, res) => {
           friend_array.push({
             username: friend.username,
             preferred_name: friend.preferred_name,
-            id: friend.id,
+            friend_id: friend.id,
             logged_in: friend.logged_in,
 
-            friend_id: val.id,
+            id: val.id,
             channel_id: val.channel_id,
           });
         }
