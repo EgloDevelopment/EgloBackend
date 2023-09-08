@@ -9,13 +9,8 @@ const validator = require("validator")
 router.post("/", async (req, res) => {
   try {
     if (req.body.about_me.length > 200) {
-      res.json({ error: "About Me is invalid" });
+      res.json({ error: "About me is invalid" });
       return;
-    }
-
-    if (validator.isAlphanumeric(req.body.preferred_name) === false || req.body.preferred_name.length > 20) {
-      res.json({error: "Preferred name is invalid"})
-      return
     }
 
     const client = get();
@@ -27,8 +22,7 @@ router.post("/", async (req, res) => {
         { token: req.cookies.token },
         {
           $set: {
-            about_me: req.body.about_me,
-            preferred_name: req.body.preferred_name,
+            about_me: req.body.about_me
           },
         }
       );

@@ -4,15 +4,13 @@ const { get } = require("../../mongodb");
 
 require("dotenv").config();
 
-const validator = require("validator");
+const validator = require("validator")
 
 router.post("/", async (req, res) => {
   try {
-    if (validator.isEmpty(req.body.new_email) !== true) {
-      if (validator.isEmail(req.body.new_email) === false) {
-        res.json({ error: "Not a valid email" });
-        return;
-      }
+    if (validator.isAlphanumeric(req.body.preferred_name) === false || req.body.preferred_name.length > 20) {
+      res.json({error: "Preferred name is invalid"})
+      return
     }
 
     const client = get();
@@ -24,15 +22,14 @@ router.post("/", async (req, res) => {
         { token: req.cookies.token },
         {
           $set: {
-            recovery_email: req.body.new_email,
+            preferred_name: req.body.preferred_name,
           },
         }
       );
 
     res.json({ success: true });
-  } catch(e) {
-    console.log(e)
-    res.json({ error: "Failed to change recovery email" });
+  } catch (error) {
+    res.json({ error: "Failed to change preferred name" });
   }
 });
 

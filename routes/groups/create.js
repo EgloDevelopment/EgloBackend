@@ -21,7 +21,7 @@ router.post("/", async (req, res) => {
         return;
       }
 
-      if (val.trim() === req.cookies.username) {
+      if (val.trim().toLowerCase() === req.cookies.username) {
         res.json({ error: "You can not add yourself" });
         return;
       }
@@ -29,7 +29,7 @@ router.post("/", async (req, res) => {
       let user = await client
         .db("EgloCloud")
         .collection("Users")
-        .findOne({ username: val.trim() });
+        .findOne({ username: val.trim().toLowerCase() });
 
       if (user === null) {
         res.json({ error: "User " + val.trim() + " does not exist" });
