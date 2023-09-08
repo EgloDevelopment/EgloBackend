@@ -37,15 +37,24 @@ router.post("/", async (req, res) => {
       if (user_receiving_friend_request.accepting_friend_requests === true) {
         if (
           user_receiving_friend_request.blocked_users.includes(
-            req.cookies.id
+            user_sending_friend_request.id
           ) === false
         ) {
-          const other_user_friends_list =
-            user_receiving_friend_request.friends.filter(
-              (item) => item.other_user === req.cookies.id
-            );
+          check_friend_if_added = await client
+            .db("EgloCloud")
+            .collection("Friends")
+            .findOne({
+              users: {
+                $all: [
+                  user_sending_friend_request,
+                  user_receiving_friend_request,
+                ],
+              },
+            });
 
-          if (other_user_friends_list.length === 0) {
+          
+
+          if (check_friend_if_added === null) {
             let id = uuidv4();
             let channel_id = uuidv4();
 

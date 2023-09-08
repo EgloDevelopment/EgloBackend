@@ -35,24 +35,26 @@ router.post("/", async (req, res) => {
         res.json({ error: "User " + val.trim() + " does not exist" });
         return;
       } else {
-        user_id_array.push(user.id);
-        user_name_array.push(user.username);
+        if (user.accepting_friend_requests === true) {
+          user_id_array.push(user.id);
+          user_name_array.push(user.username);
+        } else {
+          res.json({ error: "User " + val.trim() + " is not accepting friend/group requests" });
+          return;
+        }
       }
     }
 
     user_id_array.push(req.cookies.id);
     user_name_array.push(req.cookies.username);
 
-    await client
-      .db("EgloCloud")
-      .collection("Groups")
-      .insertOne({
-        name: "New Group",
-        users: user_id_array,
-        id: id,
-        channel_id: channel_id,
-        group_owner: req.cookies.id
-      });
+    await client.db("EgloCloud").collection("Groups").insertOne({
+      name: "New Group",
+      users: user_id_array,
+      id: id,
+      channel_id: channel_id,
+      group_owner: req.cookies.id,
+    });
 
     res.json({ users: user_name_array, id: id });
   } catch (e) {

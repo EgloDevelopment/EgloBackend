@@ -8,12 +8,17 @@ router.post("/", async (req, res) => {
 
     let users = [];
 
+    const user = await client
+      .db("EgloCloud")
+      .collection("Users")
+      .findOne({ token: req.cookies.token });
+
     const group = await client
       .db("EgloCloud")
       .collection("Groups")
       .findOne({ id: req.body.group_id });
 
-    if (group.users.includes(req.cookies.id) === false) {
+    if (group.users.includes(user.id) === false) {
       res.json({ error: "Unauthorized" });
       return;
     }
@@ -35,7 +40,7 @@ router.post("/", async (req, res) => {
     res.json({
       users: users,
       name: database_interaction.name,
-      id: database_interaction.id
+      id: database_interaction.id,
     });
   } catch {
     res.json({ error: "Failed to get group" });

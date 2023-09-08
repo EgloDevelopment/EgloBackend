@@ -6,12 +6,17 @@ router.post("/", async (req, res) => {
   try {
     const client = get();
 
+    const user = await client
+      .db("EgloCloud")
+      .collection("Users")
+      .findOne({ token: req.cookies.token });
+
     const group = await client
       .db("EgloCloud")
       .collection("Groups")
       .findOne({ id: req.body.group_id });
 
-    if (group.users.includes(req.cookies.id) === false) {
+    if (group.users.includes(user.id) === false) {
       res.json({ error: "Unauthorized" });
       return;
     }
