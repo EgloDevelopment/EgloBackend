@@ -46,7 +46,8 @@ router.post("/", async (req, res) => {
       );
 
     res.json({ success: true });
-  } catch {
+  } catch(e) {
+    console.log(e)
     res.json({ error: "Failed to leave server" });
   }
 });
