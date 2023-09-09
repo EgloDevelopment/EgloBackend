@@ -12,10 +12,10 @@ router.post("/", async (req, res) => {
       .findOne({ token: req.cookies.token });
 
     const server_array = await client
-    .db("EgloCloud")
-    .collection("Servers")
-    .find({ users: database_interaction.id })
-    .toArray();
+      .db("EgloCloud")
+      .collection("Servers")
+      .find({ users: database_interaction.id })
+      .toArray();
 
     res.json(server_array);
   } catch (e) {

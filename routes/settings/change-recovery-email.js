@@ -30,8 +30,8 @@ router.post("/", async (req, res) => {
       );
 
     res.json({ success: true });
-  } catch(e) {
-    console.log(e)
+  } catch (e) {
+    console.log(e);
     res.json({ error: "Failed to change recovery email" });
   }
 });

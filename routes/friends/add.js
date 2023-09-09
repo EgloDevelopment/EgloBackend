@@ -52,8 +52,6 @@ router.post("/", async (req, res) => {
               },
             });
 
-          
-
           if (check_friend_if_added === null) {
             let id = uuidv4();
             let channel_id = uuidv4();

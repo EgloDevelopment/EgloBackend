@@ -22,4 +22,4 @@ function formatDate(unixTimestamp) {
   return formattedDate;
 }
 
-module.exports = { formatDate }
+module.exports = { formatDate };

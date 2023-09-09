@@ -39,7 +39,10 @@ router.post("/", async (req, res) => {
           user_id_array.push(user.id);
           user_name_array.push(user.username);
         } else {
-          res.json({ error: "User " + val.trim() + " is not accepting friend/group requests" });
+          res.json({
+            error:
+              "User " + val.trim() + " is not accepting friend/group requests",
+          });
           return;
         }
       }

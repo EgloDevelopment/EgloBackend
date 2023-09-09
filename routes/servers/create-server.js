@@ -7,9 +7,7 @@ const { v4: uuidv4 } = require("uuid");
 
 router.post("/", async (req, res) => {
   try {
-    if (
-      validator.isEmpty(req.body.name) === true
-    ) {
+    if (validator.isEmpty(req.body.name) === true) {
       res.json({ error: "Name is invalid" });
       return;
     }

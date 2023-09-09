@@ -14,8 +14,8 @@ const server = http.createServer(app);
 const setupWebSocket = require(__dirname + "/routes/data/realtime");
 setupWebSocket(server, app);
 
-app.use(bodyParser.json({ limit: '5gb' }));
-app.use(bodyParser.urlencoded({ limit: '5gb', extended: true }));
+app.use(bodyParser.json({ limit: "5gb" }));
+app.use(bodyParser.urlencoded({ limit: "5gb", extended: true }));
 
 app.use(mongoSanitize());
 app.use(cors());

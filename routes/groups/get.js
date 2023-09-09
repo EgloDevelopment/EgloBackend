@@ -10,8 +10,7 @@ router.post("/", async (req, res) => {
       .db("EgloCloud")
       .collection("Groups")
       .find({ users: req.cookies.id })
-      .toArray()
-
+      .toArray();
 
     res.json(database_interaction);
   } catch {

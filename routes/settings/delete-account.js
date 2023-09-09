@@ -112,8 +112,7 @@ router.post("/", async (req, res) => {
 
         const json = { subscriber_id: user.ens_subscriber_id };
 
-        await axios
-          .post(process.env.ENS_URL + "/delete-subscriber", json);
+        await axios.post(process.env.ENS_URL + "/delete-subscriber", json);
 
         res.json({ success: true });
       } else {

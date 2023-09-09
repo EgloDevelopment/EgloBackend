@@ -4,7 +4,7 @@ const { get } = require("../../mongodb");
 
 require("dotenv").config();
 
-const validator = require("validator")
+const validator = require("validator");
 
 router.post("/", async (req, res) => {
   try {
@@ -22,7 +22,7 @@ router.post("/", async (req, res) => {
         { token: req.cookies.token },
         {
           $set: {
-            about_me: req.body.about_me
+            about_me: req.body.about_me,
           },
         }
       );
