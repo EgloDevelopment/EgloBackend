@@ -6,6 +6,11 @@ router.post("/", async (req, res) => {
   try {
     const client = get();
 
+    const user = await client
+      .db("EgloCloud")
+      .collection("Users")
+      .findOne({ token: req.cookies.token });
+
     const server = await client
       .db("EgloCloud")
       .collection("Servers")
@@ -13,7 +18,7 @@ router.post("/", async (req, res) => {
 
     if (server !== null) {
       if (server.allow_new_users !== false) {
-        if (server.users.includes(req.cookies.id) === false) {
+        if (server.users.includes(user.id) === false) {
           await client
             .db("EgloCloud")
             .collection("Servers")
@@ -21,7 +26,7 @@ router.post("/", async (req, res) => {
               { id: req.body.id },
               {
                 $push: {
-                  users: req.cookies.id,
+                  users: user.id,
                 },
               }
             );
@@ -31,7 +36,7 @@ router.post("/", async (req, res) => {
           res.json({ error: "You are already in this server" });
         }
       } else {
-        res.json({ error: "Server does not allow joining" });
+        res.json({ error: "Server does not currently allow new users" });
       }
     } else {
       res.json({ error: "Server does not exist" });
