@@ -1,18 +1,12 @@
 const express = require("express");
 const app = express();
-const http = require("http");
-const mongodb_init = require(__dirname + "/mongodb");
+const mongodb_init = require(__dirname + "/databases/mongodb");
 const cors = require("cors");
 const mongoSanitize = require("express-mongo-sanitize");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-const validateApiRequest = require("./middleware/validate-api-request.js");
 const useragent = require("express-useragent");
-const logResponseTime = require("./middleware/log-response-time");
-
-const server = http.createServer(app);
-const setupWebSocket = require(__dirname + "/routes/data/realtime");
-setupWebSocket(server, app);
+const magic = require("express-routemagic");
 
 app.use(bodyParser.json({ limit: "5gb" }));
 app.use(bodyParser.urlencoded({ limit: "5gb", extended: true }));
@@ -21,8 +15,8 @@ app.use(mongoSanitize());
 app.use(cors());
 app.use(cookieParser());
 app.use(useragent.express());
-app.use(validateApiRequest);
-app.use(logResponseTime);
+
+magic.use(app);
 
 mongodb_init();
 
@@ -31,9 +25,6 @@ app.use(function (req, res, next) {
   next();
 });
 
-const magic = require("express-routemagic");
-magic.use(app);
-
-server.listen(5000, () => {
-  console.log(`Eglo API listening on port 5000`);
+app.listen(5000, () => {
+  console.log(`EgloBackend listening on port 5000`);
 });
