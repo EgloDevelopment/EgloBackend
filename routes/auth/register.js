@@ -9,10 +9,11 @@ const bcrypt = require("bcryptjs");
 const axios = require("axios");
 
 const browser = require("browser-detect");
-const { formatDate } = require("../../functions/format-date.js");
-const { pushNotification } = require("../../functions/push-notification.js");
 
 const { validateBody } = require("../../functions/validate-body.js");
+const {
+  generatePhoneNumber,
+} = require("../../functions/generate-phone-number.js");
 
 const { encryptUserID } = require("../../functions/encrypt-user-id.js");
 
@@ -60,7 +61,7 @@ router.post("/", async (req, res) => {
       res.status(401).send({
         error: true,
         fields: ["password1"],
-        data: "Password1 does not match password2",
+        data: "Password 1 does not match password 2",
       });
       return;
     }
@@ -69,7 +70,7 @@ router.post("/", async (req, res) => {
       res.status(401).send({
         error: true,
         fields: ["password2"],
-        data: "Password2 does not match password1",
+        data: "Password 2 does not match password 1",
       });
       return;
     }
@@ -121,6 +122,7 @@ router.post("/", async (req, res) => {
         preferred_name: "",
         password: hash,
         logged_in: true,
+        eglo_number: await generatePhoneNumber(),
 
         last_online: Date.now(),
         id: user_id,

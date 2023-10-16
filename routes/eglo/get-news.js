@@ -2,18 +2,15 @@ const express = require("express");
 const router = express.Router();
 const { get } = require("../../databases/mongodb");
 
-const { getUserIDFromToken } = require("../../functions/get-user-id-from-token")
+require("dotenv").config();
 
 router.post("/", async (req, res) => {
   try {
     const client = get();
 
-    const user = await client
-      .db("EgloCloud")
-      .collection("Users")
-      .findOne({ id: await getUserIDFromToken(req.cookies.token) });
+    const news = await client.db("EgloCloud").collection("News").findOne({active: true});
 
-    res.status(200).send(user)
+    res.status(200).send(news);
   } catch (e) {
     console.log(e);
     res.status(500).send({
