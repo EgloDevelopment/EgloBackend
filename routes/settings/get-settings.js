@@ -10,26 +10,20 @@ router.post("/", async (req, res) => {
   try {
     const client = get();
 
-    await client
+    const user = await client
       .db("EgloCloud")
       .collection("Users")
-      .updateOne(
-        { id: await getUserIDFromToken(req.cookies.token) },
-        {
-          $set: { last_online: Date.now(), logged_in: false },
-        }
-      );
+      .findOne({ id: await getUserIDFromToken(req.cookies.token) });
 
-    res.status(200).send({
-      logged_out: true
-    });
-  } catch(e) {
-    console.log(e)
+    res.status(200).send(user)
+  } catch (e) {
+    console.log(e);
     res.status(500).send({
       error: true,
       fields: ["*"],
       data: "Internal server error",
     });
+    return;
   }
 });
 

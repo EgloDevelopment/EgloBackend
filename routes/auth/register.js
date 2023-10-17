@@ -61,7 +61,7 @@ router.post("/", async (req, res) => {
       res.status(401).send({
         error: true,
         fields: ["password1"],
-        data: "Password 1 does not match password 2",
+        data: "Password 1 does not match Password 2",
       });
       return;
     }
@@ -70,7 +70,7 @@ router.post("/", async (req, res) => {
       res.status(401).send({
         error: true,
         fields: ["password2"],
-        data: "Password 2 does not match password 1",
+        data: "Password 2 does not match Password 1",
       });
       return;
     }
@@ -146,6 +146,7 @@ router.post("/", async (req, res) => {
 
         language: req.headers["accept-language"].split(",")[0],
         subscription: "free",
+        subscription_expires: 0,
       });
 
     res.status(200).send({
