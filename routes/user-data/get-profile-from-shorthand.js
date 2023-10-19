@@ -10,11 +10,11 @@ router.post("/", async (req, res) => {
   try {
     const errors = await validateBody(req.body, [
       {
-        username: {
+        shorthand: {
           type: "string",
           empty: false,
           email: false,
-          max_length: 0,
+          max_length: 10,
           alphanumeric: true,
           strong_password: false,
         },
@@ -31,7 +31,7 @@ router.post("/", async (req, res) => {
     const user = await client
       .db("EgloCloud")
       .collection("Users")
-      .findOne({ username: req.body.username.toLowerCase() });
+      .findOne({ profile_shorthand: req.body.shorthand });
 
     delete user.token;
     delete user.keychain;

@@ -123,6 +123,7 @@ router.post("/", async (req, res) => {
         password: hash,
         logged_in: true,
         eglo_number: await generatePhoneNumber(),
+        profile_shorthand: Math.random().toString(20).substring(2, 9),
 
         last_online: Date.now(),
         id: user_id,
@@ -145,6 +146,7 @@ router.post("/", async (req, res) => {
         ens_subscriber_id: ens_id,
 
         language: req.headers["accept-language"].split(",")[0],
+
         subscription: "free",
         subscription_expires: 0,
       });
