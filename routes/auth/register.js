@@ -121,10 +121,10 @@ router.post("/", async (req, res) => {
         username: req.body.username.toLowerCase(),
         preferred_name: "",
         password: hash,
-        logged_in: true,
         eglo_number: await generatePhoneNumber(),
         profile_shorthand: Math.random().toString(20).substring(2, 9),
 
+        logged_in: true,
         last_online: Date.now(),
         id: user_id,
 

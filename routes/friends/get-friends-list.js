@@ -14,7 +14,7 @@ router.post("/", async (req, res) => {
 
     const friend_array = [];
 
-    const requester_id = await getUserIDFromToken(req.cookies.token)
+    const requester_id = await getUserIDFromToken(req.cookies.token);
 
     const raw_friends_data = await client
       .db("EgloCloud")
@@ -34,6 +34,7 @@ router.post("/", async (req, res) => {
             preferred_name: friend.preferred_name,
             friend_id: friend.id,
             logged_in: friend.logged_in,
+            last_online: friend.last_online,
 
             id: val.id,
             channel_id: val.channel_id,

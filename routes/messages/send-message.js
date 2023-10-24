@@ -4,18 +4,32 @@ const { get } = require("../../databases/mongodb");
 
 require("dotenv").config();
 
+const { v4: uuidv4 } = require("uuid");
+const {
+  getUserIDFromToken,
+} = require("../../functions/get-user-id-from-token");
 const { validateBody } = require("../../functions/validate-body.js");
 
 router.post("/", async (req, res) => {
   try {
     const errors = await validateBody(req.body, [
       {
-        username: {
+        channel_id: {
           type: "string",
           empty: false,
           email: false,
           max_length: 0,
-          alphanumeric: true,
+          alphanumeric: false,
+          strong_password: false,
+        },
+      },
+      {
+        content: {
+          type: "string",
+          empty: false,
+          email: false,
+          max_length: 0,
+          alphanumeric: false,
           strong_password: false,
         },
       },
@@ -28,23 +42,25 @@ router.post("/", async (req, res) => {
 
     const client = get();
 
+    const message_id = uuidv4();
+    const sent_time = Date.now();
+
     const user = await client
       .db("EgloCloud")
       .collection("Users")
-      .findOne({ username: req.body.username.toLowerCase() });
+      .findOne({ id: await getUserIDFromToken(req.cookies.token) });
 
-    delete user.token;
-    delete user.keychain;
-    delete user.blocked_users;
-    delete user.private_key;
-    delete user.password;
-    delete user.recoverable;
-    delete user.recovery_code;
-    delete user.recovery_email;
-    delete user.ens_subscriber_id;
-    delete user.subscription_expires;
+    await client.db("EgloCloud").collection("Messages").insertOne({
+      channel_id: req.body.channel_id,
+      message_id: message_id,
+      sender_id: user.id,
+      content: req.body.content.trim(),
+      time: sent_time,
+    });
 
-    res.status(200).send(user);
+    res
+      .status(200)
+      .send({ sent: true, time: sent_time, message_id: message_id });
   } catch (e) {
     console.log(e);
     res.status(500).send({

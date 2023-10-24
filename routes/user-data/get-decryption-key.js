@@ -4,18 +4,21 @@ const { get } = require("../../databases/mongodb");
 
 require("dotenv").config();
 
+const {
+  getUserIDFromToken,
+} = require("../../functions/get-user-id-from-token");
 const { validateBody } = require("../../functions/validate-body.js");
 
 router.post("/", async (req, res) => {
   try {
     const errors = await validateBody(req.body, [
       {
-        shorthand: {
+        id: {
           type: "string",
           empty: false,
           email: false,
-          max_length: 10,
-          alphanumeric: true,
+          max_length: 0,
+          alphanumeric: false,
           strong_password: false,
         },
       },
@@ -31,20 +34,11 @@ router.post("/", async (req, res) => {
     const user = await client
       .db("EgloCloud")
       .collection("Users")
-      .findOne({ profile_shorthand: req.body.shorthand });
+      .findOne({ id: await getUserIDFromToken(req.cookies.token) });
 
-    delete user.token;
-    delete user.keychain;
-    delete user.blocked_users;
-    delete user.private_key;
-    delete user.password;
-    delete user.recoverable;
-    delete user.recovery_code;
-    delete user.recovery_email;
-    delete user.ens_subscriber_id;
-    delete user.subscription_expires;
+    const key = user.keychain.filter((item) => item.id === req.body.id);
 
-    res.status(200).send(user);
+    res.status(200).send(key);
   } catch (e) {
     console.log(e);
     res.status(500).send({
