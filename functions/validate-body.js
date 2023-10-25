@@ -28,7 +28,7 @@ async function validateBody(body, params) {
 
         if (
           requirement[requirement_name].empty === false &&
-          body[requirement_name].trim().length === 0
+          body[requirement_name.trim()].length === 0
         ) {
           return {
             error: true,

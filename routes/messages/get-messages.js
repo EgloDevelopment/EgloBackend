@@ -35,6 +35,7 @@ router.post("/", async (req, res) => {
       .db("EgloCloud")
       .collection("Messages")
       .find({ channel_id: req.body.channel_id })
+      .sort({ _id: -1 })
       .limit(parseInt(req.query.limit))
       .toArray();
 
@@ -58,7 +59,7 @@ router.post("/", async (req, res) => {
       }
     }
 
-    res.status(200).send(messages);
+    res.status(200).send(messages.reverse());
   } catch (e) {
     console.log(e);
     res.status(500).send({
