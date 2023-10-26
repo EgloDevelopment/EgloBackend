@@ -42,7 +42,7 @@ router.post("/", async (req, res) => {
       .findOne({ id: req.body.id });
 
     if (
-      friend_join.users.contains(
+      friend_join.users.includes(
         await getUserIDFromToken(req.cookies.token)
       ) === false
     ) {
