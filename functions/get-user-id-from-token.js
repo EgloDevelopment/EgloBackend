@@ -12,7 +12,9 @@ async function getUserIDFromToken(id) {
   let decrypted = decipher.update(id, "hex", "utf8");
   decrypted += decipher.final("utf8");
 
-  return decrypted
+  let trimmed_id = decrypted.split("/")[1] 
+
+  return trimmed_id
 }
 
 module.exports = { getUserIDFromToken };

@@ -109,6 +109,7 @@ router.post("/", async (req, res) => {
     res.status(200).send({
       token: await encryptUserID(user.id),
       private_key: user.private_key,
+      id: user.id
     });
   } catch (e) {
     console.log(e);
